@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\TipoRepository;
+use App\Repository\GeneroRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TipoRepository::class)]
-class Tipo
+#[ORM\Entity(repositoryClass: GeneroRepository::class)]
+class Genero
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,7 +18,7 @@ class Tipo
     #[ORM\Column(length: 50)]
     private ?string $Nombre = null;
 
-    #[ORM\OneToMany(targetEntity: Obra::class, mappedBy: 'Tipo')]
+    #[ORM\ManyToMany(targetEntity: Obra::class, mappedBy: 'Genero')]
     private Collection $obras;
 
     public function __construct()
@@ -55,7 +55,7 @@ class Tipo
     {
         if (!$this->obras->contains($obra)) {
             $this->obras->add($obra);
-            $obra->setTipo($this);
+            $obra->addGenero($this);
         }
 
         return $this;
@@ -64,17 +64,14 @@ class Tipo
     public function removeObra(Obra $obra): static
     {
         if ($this->obras->removeElement($obra)) {
-            // set the owning side to null (unless already changed)
-            if ($obra->getTipo() === $this) {
-                $obra->setTipo(null);
-            }
+            $obra->removeGenero($this);
         }
 
         return $this;
     }
-    
+
     public function __toString(): string
     {
-        return $this->nombre ?? ''; // o el campo que represente su nombre
+        return $this->Nombre ?? '';
     }
 }
