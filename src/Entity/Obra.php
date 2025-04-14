@@ -34,9 +34,13 @@ class Obra
     #[ORM\ManyToMany(targetEntity: Genero::class, inversedBy: 'obras')]
     private Collection $Genero;
 
+    #[ORM\OneToMany(targetEntity: Participantes::class, mappedBy: 'Obra')]
+    private Collection $participantes;
+
     public function __construct()
     {
         $this->Genero = new ArrayCollection();
+        $this->participantes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -132,4 +136,34 @@ class Obra
 {
     return $this->Titulo ?? '';
 }
+
+    /**
+     * @return Collection<int, Participantes>
+     */
+    public function getParticipantes(): Collection
+    {
+        return $this->participantes;
+    }
+
+    public function addParticipante(Participantes $participante): static
+    {
+        if (!$this->participantes->contains($participante)) {
+            $this->participantes->add($participante);
+            $participante->setObra($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipante(Participantes $participante): static
+    {
+        if ($this->participantes->removeElement($participante)) {
+            // set the owning side to null (unless already changed)
+            if ($participante->getObra() === $this) {
+                $participante->setObra(null);
+            }
+        }
+
+        return $this;
+    }
 }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PersonaRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PersonaRepository::class)]
@@ -18,6 +20,14 @@ class Persona
 
     #[ORM\Column(length: 50)]
     private ?string $Apellido = null;
+
+    #[ORM\OneToMany(targetEntity: Participantes::class, mappedBy: 'Persona')]
+    private Collection $participantes;
+
+    public function __construct()
+    {
+        $this->participantes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -44,6 +54,36 @@ class Persona
     public function setApellido(string $Apellido): static
     {
         $this->Apellido = $Apellido;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participantes>
+     */
+    public function getParticipantes(): Collection
+    {
+        return $this->participantes;
+    }
+
+    public function addParticipante(Participantes $participante): static
+    {
+        if (!$this->participantes->contains($participante)) {
+            $this->participantes->add($participante);
+            $participante->setPersona($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipante(Participantes $participante): static
+    {
+        if ($this->participantes->removeElement($participante)) {
+            // set the owning side to null (unless already changed)
+            if ($participante->getPersona() === $this) {
+                $participante->setPersona(null);
+            }
+        }
 
         return $this;
     }
