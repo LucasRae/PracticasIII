@@ -1,41 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Obra index{% endblock %}
+{% block title %}Catálogo de Obras{% endblock %}
 
 {% block body %}
-    <h1>Obra index</h1>
+    <h1 style="text-align: center; margin-bottom: 30px;">Catálogo de Obras</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Titulo</th>
-                <th>Sinopsis</th>
-                <th>Fecha_salida</th>
-                <th>Portada</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="catalogo-container">
         {% for obra in obras %}
-            <tr>
-                <td>{{ obra.id }}</td>
-                <td>{{ obra.Titulo }}</td>
-                <td>{{ obra.Sinopsis }}</td>
-                <td>{{ obra.FechaSalida ? obra.FechaSalida|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ obra.Portada }}</td>
-                <td>
-                    <a href="{{ path('app_obra_show', {'id': obra.id}) }}">show</a>
-                    <a href="{{ path('app_obra_edit', {'id': obra.id}) }}">edit</a>
-                </td>
-            </tr>
+            <div class="obra-card">
+                <img class="obra-portada" src="{{ obra.Portada }}" alt="{{ obra.Titulo }}">
+                <div class="obra-info">
+                    <div class="obra-titulo">{{ obra.Titulo }}</div>
+                    <div class="obra-sinopsis">{{ obra.Sinopsis|slice(0, 100) ~ '...' }}</div>
+                    <div class="obra-fecha">{{ obra.FechaSalida ? obra.FechaSalida|date('Y') : '' }}</div>
+                    <div class="obra-genero">
+                        {% for genero in obra.Genero %}
+                            {{ genero.Nombre }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
+            <p>No hay obras disponibles.</p>
         {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_obra_new') }}">Create new</a>
+    </div>
 {% endblock %}

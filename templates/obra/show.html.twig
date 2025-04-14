@@ -25,7 +25,13 @@
             </tr>
             <tr>
                 <th>Portada</th>
-                <td>{{ obra.Portada }}</td>
+                <td>
+                    {% if obra.Portada %}
+                        <img src="{{ obra.Portada }}" alt="Portada de {{ obra.Titulo }}" style="max-width: 200px; border-radius: 10px;">
+                    {% else %}
+                        No hay imagen disponible
+                    {% endif %}
+                </td>
             </tr>
         </tbody>
     </table>
